@@ -10,7 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 # Create your views here.
-class PostListView(View, LoginRequiredMixin):
+class PostListView(LoginRequiredMixin,View):
     def get(self,request, *args , **kwargs):
         posts = Post.objects.filter(user=request.user)
         paginator = Paginator(posts,8)
@@ -30,14 +30,22 @@ class IndexView(View):
 class PostDetailView(View):
     def get(self, request,id,*args,**kwargs):
         post = Post.objects.get(id=id)
-        return render(request,"post/detail",context={'post':post})
+        return render(request,"post/detail.html",context={'post':post})
     
     
-class PostEditView(View):
+class PostEditView(LoginRequiredMixin,View):
     def get(self,request,id,*args,**kwargs):
-        post = Post.objects.get(id=id)
-        form = PostForm(instance=post)
-        return render(request,"post/edit.html",context={'form':form})
+        try:
+            post = Post.objects.get(id=id)
+            if post.user != request.user:
+                return redirect(reverse("403_error"))
+            form = PostForm(instance=post)
+            return render(request,"post/edit.html",context={'form':form})
+        except Post.DoesNotExist:
+            return redirect(reverse("404_error"))
+        except Exception:
+            return redirect(reverse("500_error"))
+        
 
     def post(self,request,*args,**kwargs):
         post = Post.objects.get(id=id)
@@ -47,7 +55,7 @@ class PostEditView(View):
             return redirect(reverse("post-list"))
         return render(request,"post/edit.html",context={"form":form})
     
-class PostCreateView(View):
+class PostCreateView(LoginRequiredMixin,View):
     def get(self,request,*args,**kwargs):
         form = PostForm()
         return render(request,"post/create.html",context={'form':form})
@@ -61,9 +69,11 @@ class PostCreateView(View):
             return redirect(reverse('post-list'))
         return render (request,"post/create.html",context={'form':form})
     
-class PostDeleteView(View):
+class PostDeleteView(LoginRequiredMixin,View):
     def post(self,request,*args,**kwargs):
         post = Post.objects.get(id=request.POST.get("id"))
+        if post.user != request.user:
+            return redirect(reverse("404_error"))
         post.delete()
         return redirect(reverse('post-list'))
         

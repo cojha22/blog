@@ -1,6 +1,9 @@
 {% extends 'layout/base.html' %}
 {% load static %}
  {% block title %}Home{% endblock %} 
+ {% block style %}
+ <link rel="stylesheet" href="{% static 'css/main.css' %}">
+ {% endblock %} 
  {% block content %}
  <!DOCTYPE html>
 <html lang="en">
@@ -94,7 +97,8 @@ span{
         <h5><span>Web Designer</span></h5>
           <p>Hello! My name is Chandra Ojha,from Nepal and I am currently studying BSc.CSIT 
             (Bachelor of Science in Computer Science and Information Technology).
-             I am an enthusiastic and dedicated student with a strong passion for technology and its ever-evolving landscape. 
+             I am an enthusiastic and dedicated student with a strong passion for 
+             technology and its ever-evolving landscape. 
              I am excited about the future and the opportunities that lie ahead.
               With my dedication, enthusiasm, and the knowledge gained during my BSc.CSIT studies, 
             I am confident that I can make valuable contributions to the tech industry.</p>

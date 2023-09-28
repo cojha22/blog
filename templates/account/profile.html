@@ -1,0 +1,21 @@
+{% extends 'layout/base.html' %}
+{%block title %}
+  Post List
+{%endblock title %}
+{% block content %}
+    <h2 style="color: rgb(8, 66, 93);">Create a new post</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form.as_table}}
+        <button type="submit" class="btn btn-warning btn-sm">Submit</button>
+    </form>
+{%endblock content %}
+
+<!-- <div class="mb-3">
+  <label for="title-lable" class="form-label">Title</label>
+  <input type="text" class="form-control"  name="title" >
+</div>
+<div class="mb-3">
+  <label class="form-label">Content</label>
+  <textarea name="content"></textarea>
+</div> -->

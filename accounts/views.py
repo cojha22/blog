@@ -1,9 +1,10 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from django.urls  import reverse
-from django.contrib.auth.models import User
+from accounts.models import User
 from django.contrib.auth import authenticate,login,logout
 from accounts.forms import SignUpForm,LoginForm
+from profiles.models import UersProfile
 
 
 
@@ -18,14 +19,14 @@ class LoginView(View):
             print("ccccccccccccccccccccccccccccccccccc",form.cleaned_data)
             user = authenticate(
                 request,
-                username=request.POST.get("username"),
+                username=request.POST.get("email"),
                 password=form.cleaned_data.get("password")
             )
             if user:
                 login(request,user)
                 return redirect(reverse("post-list"))
             return render(
-                request,'account/login.html',{"errors":"Usere Does not exist."}
+                request,'account/login.html',{"errors":"Users Does not exist."}
                 )
         return render(request,"account/login.html",{"errors": form.errors })
     
@@ -38,10 +39,15 @@ class SignUpView(View):
         print("data",data   )
         form = SignUpForm(request.POST  )
         if form.is_valid():
-            user=User()
+            user=User(email = form.cleaned_data.get("email"),
+                      username = form.cleaned_data.get("username"),
+                      )
             user.username =data.get('username')
             user.set_password(data.get('password'))
             user.save()
+            UersProfile.objects.create(user=user,firstname=data.get("firstname"),
+                                       lastname=data.get("lastname"))
+            
             return redirect(reverse("login"))
         else:
             print("Error", form.errors)
